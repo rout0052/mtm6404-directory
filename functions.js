@@ -15,7 +15,7 @@ const order = (clients, property) => {
         clients.sort((clientA, clientB) => clientA[property] - clientB[property])
     
     // For the name property, it is sorted using alphabetical sort. Since it was sorting by an array of object's property, I could not use the built in JS sort functionality which sorts alphabetically by default. Instead, I wrote out the long form of alphabetical sort which uses greater / less than sorts, and added in the bracket notation property part to compare the name value for each client. 
-    } else if (property === "name") {
+    } else if (property === "name" || property === "email") {
         clients.sort((clientA, clientB) => {
             if (clientA[property] < clientB[property]) {
                 return -1;
@@ -24,12 +24,19 @@ const order = (clients, property) => {
             }
             return 0;
         });
+    } else if (property === "phone") {
+        // In order to sort the phone numbers numerically, I used regular expressions to filter out only the numerical digits in the phone number. The below filter means it is looking for digits between the range of 0-9, throughout the string (global flag)
+        const filter = /[0-9]/g;
+
+        // Using the Regex filter, I do a numerical sort. In order to get the numbers, I chained several methods - first accessing the phone number property, then returning the array of the matching characters according to the above filter, then joining the array into a string. From there, I parsed the string into an integer, and compared them  to sort by phone number. 
+        clients.sort((clientA, clientB) => parseInt(clientA[property].match(filter).join('')) - parseInt(clientB[property].match(filter).join('')))
     }
     // Returns the sorted clients array
     return clients;
+
 }
 
-
+console.log(typeof(clients[0].phone.match(/[0-9]/g).join('')))
 // INSTRUCTION: Create an total function. It will take one argument (an array of clients) and return a number. The number will be total sum of the balances from every client. The reduce() method with an arrow function should be used.
 
 // Totals the balances of every client using the reduce method, and adding each balance to the total, which of course starts at 0
